@@ -109,10 +109,18 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        label1.text = "Disconnected"
+        switch peripheral.state {
+        case .disconnected:
+            label1.text = "Disconnected"
+        case .disconnecting:
+            label1.text = "Disconnecting"
+        default:
+            break
+        }
     }
     
  @IBAction func connect(_ sender: UIButton) {
      centralManager.cancelPeripheralConnection(headphoneTag!)
+    
      }
 }
