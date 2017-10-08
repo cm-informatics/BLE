@@ -24,6 +24,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.buttonDisconnect.isEnabled = false
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -50,7 +52,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
-        if peripheral.name == "Aventho"
+        if peripheral.identifier.uuidString == "800C82B2-2EFE-0153-17F1-53C1B5D88762"
         {
             print("The Name is: \(peripheral.name ?? "nil")")
             label1.text = "Connected to: \(peripheral.name!)"
@@ -121,8 +123,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func connect(_ sender: UIButton) {
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        self.buttonConnect.isUserInteractionEnabled = false
-        self.buttonDisconnect.isUserInteractionEnabled = true
+        self.buttonConnect.isEnabled = false
+        self.buttonDisconnect.isEnabled = true
         self.servicesTextView.text = " Services: "
         self.characteristicsTextView.text = "Characteristics: "
     }
@@ -131,8 +133,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     @IBAction func disconnect(_ sender: UIButton) {
         centralManager.cancelPeripheralConnection(headphoneTag!)
-        self.buttonDisconnect.isUserInteractionEnabled = false
-        self.buttonConnect.isUserInteractionEnabled = true
+        self.buttonDisconnect.isEnabled = false
+        self.buttonConnect.isEnabled = true
     }
  
 }
