@@ -14,6 +14,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBOutlet weak var label1: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var servicesTextView: UITextView!
+    @IBOutlet weak var buttonConnect: UIButton!
+    @IBOutlet weak var buttonDisconnect: UIButton!
     @IBOutlet weak var characteristicsTextView: UITextView!
     
     var centralManager: CBCentralManager!
@@ -22,9 +24,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        centralManager = CBCentralManager(delegate: self, queue: nil)
-        
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -88,6 +87,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         if error != nil {
             print("Error discovering Characteristics: \(String(describing: error?.localizedDescription))")
         }
+        
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 characteristicsTextView.text.append("\n\(characteristic.uuid)")
@@ -119,8 +119,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     
- @IBAction func connect(_ sender: UIButton) {
-     centralManager.cancelPeripheralConnection(headphoneTag!)
+    @IBAction func connect(_ sender: UIButton) {
+        centralManager = CBCentralManager(delegate: self, queue: nil)
+        self.buttonConnect.isUserInteractionEnabled = false
+        self.buttonDisconnect.isUserInteractionEnabled = true
+        self.servicesTextView.text = " Services: "
+        self.characteristicsTextView.text = "Characteristics: "
+    }
+ 
     
-     }
+    
+    @IBAction func disconnect(_ sender: UIButton) {
+        centralManager.cancelPeripheralConnection(headphoneTag!)
+        self.buttonDisconnect.isUserInteractionEnabled = false
+        self.buttonConnect.isUserInteractionEnabled = true
+    }
+ 
 }
