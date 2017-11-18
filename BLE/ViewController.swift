@@ -52,7 +52,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
-        if peripheral.identifier.uuidString == "800C82B2-2EFE-0153-17F1-53C1B5D88762"
+        //if peripheral.identifier.uuidString == "800C82B2-2EFE-0153-17F1-53C1B5D88762"
+        if peripheral.identifier.uuidString == "B2B4ABA2-6B24-DD10-303E-5FBD17BCE081"
         {
             print("The Name is: \(peripheral.name ?? "nil")")
             label1.text = "Connected to: \(peripheral.name!)"
@@ -64,6 +65,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 central.connect(aventho, options: nil)
             }
         }
+        /*else {
+            print(peripheral.identifier.uuidString)
+            print(peripheral.name ?? "no name")
+        }*/
         print("Scanning: \(central.isScanning)")
         statusLabel.text? = "Scanning: \(central.isScanning ? "started" : "stopped")"
     }
@@ -79,7 +84,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = peripheral.services {
             for service in services {
-                servicesTextView.text.append("\n\(service.uuid.uuidString)")
+                servicesTextView.text.append("\n\(service.uuid)")
                 peripheral.discoverCharacteristics(nil, for: service)
             }
         }
@@ -103,9 +108,24 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let value = characteristic.value {
             
-            let data = NSString(data: value, encoding: 8)!
-            print(data)
-            characteristicsTextView.text.append("\n\(data)")
+            // Hier wandle ich explizit den Battery-Level in einen Integer um (nur zum Test ob das geht).
+            if characteristic.service.uuid.uuidString == "180F"
+            {
+                print("Found")
+                let byteArray = [UInt8](value)
+                print(byteArray)
+                for byte in byteArray{
+                    print(byte)
+                }
+            }
+            
+            if let data = NSString(data: value, encoding: String.Encoding.utf8.rawValue)
+            {
+                characteristicsTextView.text.append("\n\(data)")
+            }
+            else {
+                print(value.first ?? 0)
+            }
             
         }
     }
